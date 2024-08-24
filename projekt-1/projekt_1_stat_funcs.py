@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# last edit:    2024-08-24  15:30
 """
 modul s funkcemi pro zpracování textu v projekt_1.py 
 
@@ -11,44 +11,47 @@ discord:  daniel_67828
 # module offers functions that produce various statistics of given texts
 # that had already been transformed to lists of words (eg. using txt.split())
 
-def wcountLowercase(wlist):
-    # counts lowercase words in word list 'wlist'
-    c = 0
-    # for w in wlist: 
+#-----------------------------------------------------------------------------
+def wcountLowercase(word_list):
+    # counts lowercase words in word list 'word_list'
+    counter = 0
+    # for w in word_list: 
     #     if w.islower():
-    #         c += 1
+    #         c  += 1
     #     # endif
     # # endfor
-    for w in wlist:
-        is_w_lowercase = True
-        for char in w:
+    for word in word_list:
+        is_w_lowercase = True   # a flag, may be cleared, if NOT lowercase
+        for char in word:
             # char-by-char test
             if not char.islower():
                 is_w_lowercase = False
                 break
             # endif
         # endfor
+        # now info about lower-case status is contained in is_w_lowercase
         if is_w_lowercase:
-            c += 1
+            counter += 1
 #            print(f"{w} is LOWERCASE.\n")
         # endif
     # endfor    
     
-    return c
+    return counter
 # enddef
 
-def wcountUppercase(wlist):
-    # counts uppercase words in word list 'wlist'
-    c = 0
-    # for w in wlist:
+#-----------------------------------------------------------------------------
+def wcountUppercase(word_list):
+    # counts uppercase words in word list 'word_list'
+    counter = 0
+    # for w in word_list:
     #     if w.isupper(): # isupper() and islower() do not regard presence of
     #         c += 1      # digits as a reason for False outcome!!!
     #         print(f"{w} is UPPERCASE.\n")
     #     # endif
     # # endfor
-    for w in wlist:
+    for word in word_list:
         is_w_uppercase = True
-        for char in w:
+        for char in word:
             # char-by-char test
             if not char.isupper():
                 is_w_uppercase = False
@@ -56,66 +59,73 @@ def wcountUppercase(wlist):
             # endif
         # endfor
         if is_w_uppercase:
-            c += 1
+            counter += 1
 #            print(f"{w} is UPPERCASE.\n")
         # endif
     # endfor    
     
-    return c
+    return counter
 # enddef
 
-wsum = 0.0  # global, to be exported only therough wsumNumeric() func below
+sum_of_numeric_words = 0.0  # global, a wcountNumeric() byproduct, exported 
+                            # only through wsumNumeric() function below
 
-def wcountNumeric(wlist):
-    # counts numeric words (i.e. numbers) in word list 'wlist' and sums them
-    # up in a global variable wsum
-    global wsum
-    wsum = 0.0   # nutné resetovat před každou další kompletní analýzou
-    c = 0
-    for w in wlist: 
-        if w.isdigit():
+#-----------------------------------------------------------------------------
+def wcountNumeric(word_list):
+    # returns the number of numeric words (i.e. numbers) in word list
+    # 'word_list' and sums them up into a global sum_of_numeric_words
+    global sum_of_numeric_words
+
+    sum_of_numeric_words = 0.0   # resetting before each run
+    counter = 0
+    for word in word_list: 
+        if word.isdigit():
             #print(f"{w} is numeric.\n")
-            c += 1
-            wsum += float(w)
+            counter += 1
+            sum_of_numeric_words += float(word)
         # endif
     # endfor
-    return c
+    return counter
 # enddef
 
-def wcountNames(wlist):
+#-----------------------------------------------------------------------------
+def wcountNames(word_list):
     # counts names (i.e. titlecase words, or words with capital first
-    # letter and NOT all-caps) in word list 'wlist'
-    c = 0
-    for w in wlist: 
-        if w.isalpha() and w[0].isupper():
-            c += 1
+    # letter and NOT all-caps) in word list 'word_list'
+    counter = 0
+    for word in word_list: 
+        if word.isalpha() and word[0].isupper():
+            counter += 1
         # endif
     # endfor
-    return c
+    return counter
 # enddef
 
+#-----------------------------------------------------------------------------
 def wsumNumeric():
-    # gives the value in wsum global, which 
-    # had been filled by wcountNumeric()
-    global wsum
-    return wsum # works only if preceded by wcountNumeric() on the same text
+    # only gives the value in sum_of_numeric_words global, which 
+    # had been filled by wcountNumeric(), just an interface function
+    global sum_of_numeric_words
+    return sum_of_numeric_words # works only if preceded by wcountNumeric() on the same text
 # enddef
 
-def getTextStatString(wlist):
+#-----------------------------------------------------------------------------
+def getTextStatString(word_list):
     # calls text stat functions and assembles the output (multiline) string
-    sout = str()
-    sout = "There are " + str(len(wlist)) + " words in the selected text.\n"
-    sout += "There are " + str(wcountNames(wlist)) + " titlecase words.\n"
-    sout += "There are " + str(wcountUppercase(wlist)) + " uppercase words.\n"
-    sout += "There are " + str(wcountLowercase(wlist)) + " lowercase words.\n"
-    sout += "There are " + str(wcountNumeric(wlist)) + " numeric strings.\n"
+    sout = str()    # this hold string output of this function
+    sout = "There are " + str(len(word_list)) + " words in the selected text.\n"
+    sout += "There are " + str(wcountNames(word_list)) + " titlecase words.\n"
+    sout += "There are " + str(wcountUppercase(word_list)) + " uppercase words.\n"
+    sout += "There are " + str(wcountLowercase(word_list)) + " lowercase words.\n"
+    sout += "There are " + str(wcountNumeric(word_list)) + " numeric strings.\n"
     sout += "The sum of all the numbers is:" + str(int(wsumNumeric())) + "\n"   
 
     return sout
 # enddef
 
-def getCharcountHistogram(wlist):
-    # counts characters in every word in word list 'wlist', fills histogram
+#-----------------------------------------------------------------------------
+def getCharcountHistogram(word_list):
+    # counts characters in every word in word list 'word_list', fills histogram
     # list of int and transforms this list into multiline str sout, eg.
     # '''
     #  7| *                 |1
@@ -125,21 +135,22 @@ def getCharcountHistogram(wlist):
     # 11| **********        |10
     # '''
 
-    c = 0
+    counter = 0
 
-    lhist = []
-    for w in wlist: 
+    lhist = []  # histogram, ie. target list of counts of word lengths 
+    for word in word_list: 
         
-        if len(lhist) <= len(w):
-            for ii in range(len(lhist),len(w)+1): # extending histogram,
+        if len(lhist) <= len(word):
+            for ii in range(len(lhist),len(word)+1): # extending histogram,
                 # so it can contain the currently-longest word count
                 lhist.append(0)
             # endfor
         # endif
-        lhist[len(w)] += 1
+        lhist[len(word)] += 1
     # endfor
+    # now word-length analysis is done, lhist contains the result 
 
-    # here to identify the biggest histogram value, needed for
+    # here to identify the biggest histogram value hmax, needed for
     # output alignment
     hmax = 0
     for x in lhist:
@@ -147,7 +158,9 @@ def getCharcountHistogram(wlist):
             hmax = x
         # endif
     # endfor
-    # hmax now conatins the biggest histogram value
+    # hmax now contains the biggest histogram value
+
+    # 'just' is a parameter for formatting (padding) on-screen output
     if hmax <= 8:
         just = 10
     elif (hmax % 2) > 0:    # padded size just to be an odd number
@@ -155,14 +168,16 @@ def getCharcountHistogram(wlist):
     else:
         just = hmax + 2
     # endif
+    #  
 
-    sout = str()
-    c = 0
-    trig = False
+    sout = str()    # this hold string output of this function
+    counter = 0
+    trig = False    # just a flag, so that histogram is printed starting
+                    # the first non-zero bin
     for x in lhist:
         if trig:
-            sout += str(c).rjust(3,' ')+'|'
-            stars = ""
+            sout += str(counter).rjust(3,' ')+'|'
+            stars = ""  # contains star bar for a given bin
             if x > 0:
                 stars = ('*' * x) 
             #endif
@@ -171,12 +186,12 @@ def getCharcountHistogram(wlist):
             if x > 0: # this is for the first (lowest-bin) non-zero
                 # histogram value
                 trig = True
-                sout = str(c).rjust(3,' ')+'|'
+                sout = str(counter).rjust(3,' ')+'|'
                 stars = ('*' * x)
                 sout += stars.ljust(just,' ')+'|'+str(x)
             # endif
         # endif
-        c += 1
+        counter += 1
         sout += '\n'
     # endfor
     
@@ -184,19 +199,19 @@ def getCharcountHistogram(wlist):
     #----------------------------------------
     #LEN| OCCURENCES |NR.
     #----------------------------------------
-    hdr = "-" * 40
-    hdr += '\n'
+    header = "-" * 40
+    header += '\n'
     if hmax <= 8:
-        hdr += "LEN|OCCURENCES|NR."
+        header += "LEN|OCCURENCES|NR."
     else:
-        hdr += "LEN|"
+        header += "LEN|"
         occ = "OCCURENCES".rjust(int((just+10)/2),' ').ljust(int(just),' ')
-        # eg. symmetric padding, len("OCCURENCES")==10
-        hdr += occ
-        hdr += "|NR.\n"
-    hdr += "-" * 40
-    hdr += '\n'
-    sout = hdr+sout
+        # 'occ' gives symmetrically padded, len("OCCURENCES")==10
+        header += occ
+        header += "|NR.\n"
+    header += "-" * 40
+    header += '\n'
+    sout = header + sout
     sout += "-" * 40
     sout += '\n\n'
 
@@ -205,4 +220,4 @@ def getCharcountHistogram(wlist):
 
 
 
-# endmodule
+# endcode
